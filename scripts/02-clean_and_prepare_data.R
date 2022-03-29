@@ -2,15 +2,7 @@
 # The purpose of this script is to clean the raw data output
 # Prerequisite: run 01-gather_data.R and have the outputted raw_data.csv file saved
 
-# TODO: REMOVE ANY UNUSED LIBRARIES
-library(janitor)
-library(pdftools)
-library(purrr)
 library(tidyverse)
-library(stringi)
-library(readr)
-library(plyr)
-library(dplyr)
 
 raw_data <- read_csv("inputs/data/raw_data.csv")
 

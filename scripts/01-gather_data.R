@@ -1,14 +1,8 @@
 ## ACQUIRE DATA ##
 # The purpose of this script is to obtain and download our dataset
 
-# TODO: REMOVE ANY UNUSED LIBRARIES
-library(janitor)
 library(pdftools)
-library(purrr)
 library(tidyverse)
-library(stringi)
-library(readr)
-library(plyr)
 
 # CODE TO DOWNLOAD PDF (save it in inputs/)
 download.file(
