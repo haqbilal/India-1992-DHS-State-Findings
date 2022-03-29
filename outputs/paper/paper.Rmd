@@ -1,5 +1,5 @@
 ---
-title: "Looking at the India State Findings frm the 1992 DHS Final Report"
+title: "Looking at the India State Findings from the 1992 DHS Final Report"
 subtitle: ""
 author: 
   - Bilal Haq

@@ -3,6 +3,7 @@
 # Prerequisite: run 01-gather_data.R and have the outputted raw_data.csv file saved
 
 library(tidyverse)
+library(pointblank)
 
 raw_data <- read_csv("inputs/data/raw_data.csv")
 
@@ -81,6 +82,13 @@ state_names <- c(1:26) # TODO: Put the state names here
 final_df <- data.frame(big_mat)
 colnames(final_df) <- column_names
 final_df$states <- state_names
+
+# Use pointblank to perform tests on the newly cleaned data
+agent <-
+  create_agent(tbl = final_df) |>
+  col_is_numeric(columns = 1:23) |> # test that the variables that should be numeric are
+  col_is_character(columns = vars(states)) |> # test that the variables that should be characters are
+  interrogate()
 
 # save it to a csv file so we only need to run this script once at the beginning of our journey
 write.csv(final_df, "inputs/data/cleaned_data.csv", row.names=FALSE)
