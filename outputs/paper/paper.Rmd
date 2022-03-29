@@ -1,10 +1,10 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Looking at the India State Findings frm the 1992 DHS Final Report"
+subtitle: ""
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+  - Bilal Haq
+  - Ritvik Puri
+thanks: "Code and data are available at: https://github.com/haqbilal/India-1992-DHS-State-Findings"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 output:
