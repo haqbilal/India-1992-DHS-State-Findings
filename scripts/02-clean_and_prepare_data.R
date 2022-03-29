@@ -83,7 +83,7 @@ colnames(final_df) <- column_names
 final_df$states <- state_names
 
 # save it to a csv file so we only need to run this script once at the beginning of our journey
-write.csv(final_df, "inputs/data/clean_data.csv", row.names=FALSE)
+write.csv(final_df, "inputs/data/cleaned_data.csv", row.names=FALSE)
 
 
 ## END OF SCRIPT ##
