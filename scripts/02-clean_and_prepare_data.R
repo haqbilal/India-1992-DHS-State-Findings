@@ -83,7 +83,7 @@ state_names <- c("India", "Delhi", "Haryana", "Himachal Pradesh", "Jammu & Kashm
 # after cleaning, construct the final data frame
 final_df <- data.frame(big_mat)
 colnames(final_df) <- column_names
-final_df$states <- state_names
+final_df$`States` <- state_names
 
 # Use pointblank to perform tests on the newly cleaned data
 agent <-
