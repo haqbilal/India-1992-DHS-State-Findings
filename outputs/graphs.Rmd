@@ -1,0 +1,127 @@
+---
+title: "graphs"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(DiagrammeR)
+library(reshape2)
+
+dhs <- readr::read_csv(here::here("inputs/data/cleaned_data.csv"))
+dhs <- dhs %>%
+  select(states, everything())
+# TODO: delete after complete
+view(dhs)
+```
+
+Graphs
+```{r}
+# Illiterate females get married early
+dhs %>%
+  ggplot(aes(`Percent of illiterate females`, `Percent of women married before age 18`, color = states)) +
+  geom_point()
+
+# Illiteracy has no connection to contraceptives? 
+dhs %>%
+  ggplot(aes(`Percent of illiterate females`, `Percent of women using any contraceptive method`)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+# Women going to school in each state
+dhs %>%
+  ggplot(aes(x=states, y=`Percent of females attending schools`)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+  #theme(axis.text.x = element_text(angle = 90))
+
+#Unmet family planning leading to infant mortality or under 5 mortality are apparently not related
+dhs %>%
+  ggplot(aes(`Unmet need for family planning`, `Infant mortality rate`)) +
+  geom_point()
+
+dhs %>%
+  ggplot(aes(`Unmet need for family planning`, `Under 5 mortality`)) +
+  geom_point()
+
+#females schools & illerate vs immunization
+dhs %>%
+  ggplot(aes(`Percent of children who received ORS for diarrhea`, `Percent of children fully immunized`)) +
+  geom_point()
+
+dhs %>%
+  ggplot(aes(`Percent of illiterate females`, `Percent of children fully immunized`)) +
+  geom_point()
+```
+
+
+```{r}
+# dhs$`Percent of children who received ORS for diarrhea`[1]
+dhs <- dhs %>%
+  mutate(nigib1 = case_when(
+    `Percent of illiterate females` >= 56.7 ~ 1,
+    `Percent of illiterate females` < 56.7 ~ -1
+  ))
+dhs <- dhs %>%
+  mutate(nigib2 = case_when(
+    `Percent of children who received ORS for diarrhea` >= 30.6 ~ 1,
+    `Percent of children who received ORS for diarrhea` < 30.6 ~ -1
+  ))
+
+interaction.plot(dhs$nigib1, dhs$nigib2, dhs$`Percent of children fully immunized`)
+```
+
+```{r}
+DiagrammeR::grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape = plaintext, fontsize = 10, fontname = Helvetica]
+    Illiterate
+    ORS
+    Immunized
+  edge [minlen = 2, arrowhead = vee]
+    Illiterate->ORS
+    Illiterate->Immunized
+    ORS->Immunized
+  { rank = same; Illiterate; ORS }
+}
+", height = 300)
+```
+
+
+```{r}
+#States with household toilet & water pipes
+nigib1 <- data.frame(dhs$states, dhs$`Percent of households with drinking water from pipe`, dhs$`Percent of households with no toilet facility`)
+colnames(nigib1) <- c("States", "Water", "Toilets")
+nigib2 <- reshape2::melt(nigib1, id.vars = 'States')
+
+
+nigib2 %>%
+  ggplot(aes(x = States, y = value, fill=variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip()
+```
+
+
+```{r}
+# Per state, underwight stunted and wasted children
+nigib1 <- data.frame(dhs$states, dhs$`Percent of children underweight`, dhs$`Percent of children stunted`, dhs$`Percent of children wasted`)
+colnames(nigib1) <- c("States", "Underwight", "Stunted", "Wasted")
+nigib2 <- reshape2::melt(nigib1, id.vars = 'States')
+
+
+nigib2 %>%
+  ggplot(aes(x = States, y = value, fill=variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip()
+```
+
+
+
+
+
+
+
+
