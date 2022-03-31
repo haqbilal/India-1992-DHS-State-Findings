@@ -15,6 +15,12 @@ bibliography: references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+dhs <- readr::read_csv(here::here("inputs/data/cleaned_data.csv"))
+dhs <- dhs %>%
+  select(states, everything())
+view(dhs)
 ```
 
 # Introduction
@@ -22,6 +28,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Data
+Graphs
+```{r}
+# Illiterate females get married early
+dhs %>%
+  ggplot(aes(`Percent of illiterate females`, `Percent of women married before age 18`, color = states)) +
+  geom_point()
+
+# Illiteracy has no connection to contraceptives?
+dhs %>%
+  ggplot(aes(`Percent of illiterate females`, `Percent of women using any contraceptive method`)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+# Women going to school in each state
+dhs %>%
+  ggplot(aes(x=states, y=`Percent of females attending schools`)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+  #theme(axis.text.x = element_text(angle = 90))
+
+#Unmet family planning leading to infant mortality are apparently not related
+dhs %>%
+  ggplot(aes(`Unmet need for family planning`, `Infant mortality rate`)) +
+  geom_point()
+```
 
 
 
