@@ -8,12 +8,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(DiagrammeR)
 library(reshape2)
+library(here)
+library(knitr)
 
-dhs <- readr::read_csv(here::here("inputs/data/cleaned_data.csv"))
-dhs <- dhs %>%
-  select(states, everything())
-# TODO: delete after complete
-view(dhs)
+dhs <- read_csv(here::here("inputs/data/cleaned_data.csv"), show_col_types = FALSE)
 ```
 
 Graphs
@@ -118,7 +116,10 @@ nigib2 %>%
   coord_flip()
 ```
 
-
+```{r}
+tiny_dhs <- dhs |>
+  select(c(1, 2, 4, 14, 16, 19))
+```
 
 
 

@@ -84,9 +84,10 @@ state_names <- c("India", "Delhi", "Haryana", "Himachal Pradesh", "Jammu & Kashm
 final_df <- data.frame(big_mat)
 colnames(final_df) <- column_names
 final_df$`States` <- state_names
-# Make states the first column
+
+# Make states the first column for visual nice
 final_df <- final_df |>
-  select(states, everything())
+  select(`States`, everything())
 
 # Use pointblank to perform tests on the newly cleaned data
 agent <-

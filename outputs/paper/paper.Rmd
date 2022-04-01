@@ -1,5 +1,5 @@
 ---
-title: "Looking at the India State Findings from the 1992 DHS Final Report"
+title: "Now that's fresh water: Trends in India from the 1992 Demographic and Health Survey"
 subtitle: ""
 author: 
   - Bilal Haq
@@ -9,7 +9,7 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 output:
   bookdown::pdf_document2
-toc: FALSE
+toc: TRUE
 bibliography: references.bib
 ---
 
@@ -35,7 +35,11 @@ include details of the methodology used by the DHS you used, and its key feature
 
 \newpage
 
+
+
 \appendix
+
+
 
 # Appendix {-}
 
