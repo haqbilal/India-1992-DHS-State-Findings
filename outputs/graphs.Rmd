@@ -121,8 +121,72 @@ tiny_dhs <- dhs |>
   select(c(1, 2, 4, 14, 16, 19))
 ```
 
+```{r}
+kable(head(tiny_dhs, 5))
+```
 
+```{r}
+tiny_dhs |>
+  ggplot(aes(`Percent of illiterate females`, `Percent of children fully immunized`)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
 
+```{r}
+tiny_dhs |>
+  ggplot(aes(`Percent of mothers receiving antenatal care`, `Percent of births delivered in health facility`)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
 
+```{r}
+tiny_dhs |>
+  ggplot(aes(`Percent of illiterate females`, `Percent of births delivered in health facility`)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
+
+```{r}
+tiny_dhs <- tiny_dhs |>
+  mutate(illiterate = case_when(
+    `Percent of illiterate females` >= 56.7 ~ 1,
+    `Percent of illiterate females` < 56.7 ~ -1
+  ))
+
+tiny_dhs <- tiny_dhs |>
+  mutate(antenatal = case_when(
+    `Percent of mothers receiving antenatal care` >= 62.3 ~ 1,
+    `Percent of mothers receiving antenatal care` < 62.3 ~ -1
+  ))
+
+tiny_dhs <- tiny_dhs |>
+  mutate(water = case_when(
+    `Percent of households with drinking water from pipe` >= 68.2 ~ 1,
+    `Percent of households with drinking water from pipe` < 68.2 ~ -1
+  ))
+
+tiny_dhs <- tiny_dhs |>
+  mutate(births = case_when(
+    `Percent of births delivered in health facility` >= 25.5 ~ 1,
+    `Percent of births delivered in health facility` < 25.5 ~ -1
+  ))
+
+tiny_dhs <- tiny_dhs |>
+  mutate(immunized = case_when(
+    `Percent of children fully immunized` >= 35.4 ~ 1,
+    `Percent of children fully immunized` < 35.4 ~ -1
+  ))
+```
+
+```{r}
+interaction.plot(tiny_dhs$illiterate, tiny_dhs$antenatal, tiny_dhs$births)
+interaction.plot(tiny_dhs$illiterate, tiny_dhs$antenatal, tiny_dhs$immunized)
+
+interaction.plot(tiny_dhs$illiterate, tiny_dhs$water, tiny_dhs$births)
+interaction.plot(tiny_dhs$illiterate, tiny_dhs$water, tiny_dhs$immunized)
+
+interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$births)
+interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$immunized)
+```
 
 
