@@ -4,7 +4,7 @@ subtitle: "Trends in India from the 1992 Demographic and Health Survey"
 thanks: "Code and data are available at: https://github.com/haqbilal/India-1992-DHS-State-Findings"
 author: Bilal Haq and Ritvik Puri
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "Third world countries often struggle with figuring out where the needs of their people lie. Analysis of large datasets can help shed some light on the issue. We obtain a dataset from the National Family Health Survey in India, hosted by the Demographic and Health Surveys program in the U.S. In a reproducible way, we convert this dataset from the 1990s into a usable digital format, and analyze it. In doing so, we conclude that acquiring a large dataset and using it to establish policies should be a primary goal of developing countries that want to improve their economic conditions."
 output:
   bookdown::pdf_document2
 toc: TRUE
@@ -13,13 +13,15 @@ bibliography: references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(tidyverse)
 ```
 
 \newpage
 
 # Introduction
 
-The period 1980-2000 featured data science at the forefront of a developing era of statistical modelling, and several countries were finally jumping on the bandwagon. Acknowledging that a large scale survey on the population of India had never been done before, K.B. Pathak was ready to forge the path forward on behalf of his country. He was the director of the International Institute for Population Sciences (IIPS) in Bombay, and his team headed the Project to Strengthen the Research Capabilities of the Population Research Centres in India in 1991. The primary objective of this campaign was to finally provide state-level and national-level estimates of fertility, infant/child mortality, family planning practices, maternal/child health care, and the utilization of services provided for mothers and children. The National Family Health Survey (NFHS) took on this mission, and as a byproduct, provided high quality data to statisticians for analytical research on a range of population and health studies. 
+The period 1980-2000 featured data science at the forefront of a developing era of statistical modelling, and several third world countries were beginning to jump on the bandwagon. Acknowledging that a large scale survey on the population of India had never been done before, K.B. Pathak (@nfhs) was ready to forge the path forward on behalf of his country. He was the director of the International Institute for Population Sciences (IIPS) in Bombay, and his team headed the Project to Strengthen the Research Capabilities of the Population Research Centres in India in 1991. The primary objective of this campaign was to finally provide state-level and national-level estimates of fertility, infant/child mortality, family planning practices, maternal/child health care, and the utilization of services provided for mothers and children. The National Family Health Survey (NFHS) took on this mission, and as a byproduct, provided high quality data to statisticians for analytical research on a range of population and health studies. 
 
 The release of this report came with a call from the IIPS for further analyses of the NFHS data, among researches both in and outside of India. The final report was made publicly available to anyone in the word through the United States Agency for International Development’s (USAID) Demographic and Health Surveys (DHS) program. The report contains a thorough record of household/individual respondent characteristics. Namely, data on marriage, fertility, family planning, utilization of antenatal services, vaccination, child feeding practices, nutritional status of children, and knowledge of AIDS. Alongside, interstate variations on key indicators were also included, allowing for regional comparisons to be made. As independent researchers and data scientists, we have taken on the IIPS’s call to further analyze this data, and report our findings and comments in this paper.
 
@@ -31,17 +33,32 @@ The report onwards features three sections. Firstly, we look at the dataset prov
 
 The NFHS’s final report from 1992 is publicly hosted on the DHS program’s website in PDF format. The data has been sourced in a reproducible way, with a script for downloading and obtaining the relevant datasets. It is an in-depth review of statistics such as access to clean water and amenities, fertility, family planning, child care, and health, on a sample of women and children, with the goal being to summarize the status of women and children, as key factors towards growth of the country, while identifying any present flaws, in hopes of administering aid where possible. In terms of privacy, no underlying information has been kept that could point towards or reveal any individual that took part in the survey. Note that a constraint of this dataset is that it cannot be truly compared to similar reports from other organizations, because of differing methods in categorization as well as geographic stratification. Time constraints may also affect results from different surveys. 
 
-Our focus is on the state findings table on pages 31-32 of the report. The full table is shown on the next page [SHOW BOTH TABLES ON NEXT PAGE]. In particular, we will look at the columns: percent of illiterate females, households with drinking water, mothers receiving antenatal care (that is, special care while pregnant), births delivered in a health facility, and fully immunized children. These variables were selected because they paint the picture of health conditions for those living in India, and the status of pertinent features such as access to water, and amenities for pregnant women and their children. This information is given for each of the 25 states, as well as in total for all of India. Information from some columns was unavailable or omitted because it involved 25 or less people, in which case they were left out of analysis. A table for the first 5 states of the dataset with filtered variables is shown below [TABLE HERE]. All quantities are percentages of the sample for that state, unless otherwise specified.
+Our focus is on the state findings table on pages 31-32 of the report. The full table is shown below in Figures 1 and 2. In particular, we will look at the columns: percent of illiterate females, households with drinking water, mothers receiving antenatal care (that is, special care while pregnant), births delivered in a health facility, and fully immunized children. These variables were selected because they paint the picture of health conditions for those living in India, and the status of pertinent features such as access to water, and amenities for pregnant women and their children. This information is given for each of the 25 states, as well as in total for all of India. Information from some columns was unavailable or omitted because it involved 25 or less people, in which case they were left out of analysis. A table for the first 5 states of the dataset with filtered variables is shown below in Table 1. All quantities are percentages of the sample for that state, unless otherwise specified.
+
+```{r, warning=FALSE, echo=FALSE, fig.align="center", fig.cap="The Table in the NFHS Final Report", out.width = '95%'}
+include_graphics(here::here("outputs/materials/fact sheet 1.png"))
+include_graphics(here::here("outputs/materials/fact sheet 2.png"))
+```
+```{r, echo=FALSE, out.width = '95%'}
+dhs <- read_csv(here::here("inputs/data/cleaned_data.csv"), show_col_types = FALSE)
+tiny_dhs <- dhs |>
+  select(c(1, 2, 4, 14, 16, 19))
+tiny_copy <- tiny_dhs |>
+  slice(1:10)
+colnames(tiny_copy) <-  c("State", "Illiteracy", "Access to Water", "Antenatal", "Births in Facility", "Immunization")
+kable(tiny_copy, caption="The first 10 rows of our filtered dataset (values are percentages)", booktabs=TRUE)
+```
+
 
 ## Methodology
 
-In formulating the survey questionnaires (see Appendix F of the NFHS final report), a Questionnaire Design Workshop was held in Pune, September 1991. There, representatives from IIPS and other organizations such as USAID, designed the contents, which were designed with India’s low contraceptive prevalence in mind. Modifications were made to the questionnaire that kept in consideration the Indian social and cultural environment as well as the NFHS objectives. Individual states also included state-specific questions pertaining to issues of importance in those regions. Three questionnaires were created; the Household Questionnaire, Woman’s Questionnaire, and Village Questionnaire. 
+In formulating the survey questionnaires (see Appendix F of the NFHS final report), a Questionnaire Design Workshop was held in Pune, September 1991. There, representatives from IIPS and other organizations such as USAID, designed the contents, which were designed with India’s low contraceptive prevalence in mind. Modifications were made to the questionnaire that kept in consideration the Indian social and cultural environment as well as the NFHS objectives. Individual states also included state-specific questions pertaining to issues of importance in those regions. Three questionnaires were created; the Household Questionnaire, Woman’s Questionnaire, and Village Questionnaire (@nfhs). 
 
-The Household Questionnaire listed counts of residents in each sample household, and visitors who stayed from the night before. Information collected included age, sex, marital status, education, occupation, and household conditions such as access to water and toilets. It’s main purpose was to identify women eligible to participate in the Woman’s Questionnaire (women in between 13-49 years of age). The Woman’s Questionnaire then gathered information on the respondents’ background, reproduction (i.e. births given), contraception, health of children, fertility preferences (i.e. desire for children), and nutritional status of children (i.e. height and weight). Lastly, the Village Questionnaire collected data on the amenities accessible to villages, such as electricity, water, transport, and educational and health facilities.
+The Household Questionnaire listed counts of residents in each sample household, and visitors who stayed from the night before. Information collected included age, sex, marital status, education, occupation, and household conditions such as access to water and toilets. It’s main purpose was to identify women eligible to participate in the Woman’s Questionnaire (women in between 13-49 years of age). The Woman’s Questionnaire then gathered information on the respondents’ background, reproduction (i.e. births given), contraception, health of children, fertility preferences (i.e. desire for children), and nutritional status of children (i.e. height and weight). Lastly, the Village Questionnaire collected data on the amenities accessible to villages, such as electricity, water, transport, and educational and health facilities (@nfhs).
 
-A three-stage sample design was used in each state: first selecting cities, then blocks, and finally households. These selections were based on enumerations of the cities and blocks from India’s 1991 census. The cities were divided into three strata: (1) self-selecting cities (i.e. volunteers), (2) district headquarters, (3) all other cities. In each strata, selection of the required number of blocks was followed by selection of an average of 20 households. This accounts for possible bias in population densities of different cities, as well as geographical/regional bias from different locations.
+A three-stage sample design was used in each state: first selecting cities, then blocks, and finally households. These selections were based on enumerations of the cities and blocks from India’s 1991 census. The cities were divided into three strata: (1) self-selecting cities (i.e. volunteers), (2) district headquarters, (3) all other cities. In each strata, selection of the required number of blocks was followed by selection of an average of 20 households. This accounts for possible bias in population densities of different cities, as well as geographical/regional bias from different locations (@nfhs).
 
-The methodology was prone to one major weakness, accessibility of the survey. Data collection teams were noted to struggle in reaching sampling units located in hilly regions, due to lack of roads and other transportation. For example, in the state Uttar Pradesh, teams covered the sampling units on foot. Further, security was another concern. During December 1992, communal riots caused the presence of bandits in some villages. In this case, sampling units in Madhya Pradesh were avoided, and the data collection could not be fully completed. Moreover, unseasonal rains that were not forecast delayed data collection in Karnataka, Kerala, and other Northeastern states. Lastly, teams failed to establish contact with some households, and as many as possible were attempted a second time at a later date to minimize the nonresponse rate, however in some cases it was unavoidable. 
+The methodology was prone to one major weakness, accessibility of the survey. Data collection teams were noted to struggle in reaching sampling units located in hilly regions, due to lack of roads and other transportation. For example, in the state Uttar Pradesh, teams covered the sampling units on foot. Further, security was another concern. During December 1992, communal riots caused the presence of bandits in some villages. In this case, sampling units in Madhya Pradesh were avoided, and the data collection could not be fully completed. Moreover, unseasonal rains that were not forecast delayed data collection in Karnataka, Kerala, and other Northeastern states. Lastly, teams failed to establish contact with some households, and as many as possible were attempted a second time at a later date to minimize the nonresponse rate, however in some cases it was unavoidable (@nfhs). 
 
 ## Visualization
 
@@ -49,28 +66,106 @@ For brevity, we will refer to the percentages of illiterate females, households 
 
 Now we study is the interaction between our variables. That is, if a change in one is affecting a change in another, on some outcome. To aid in this process, we define our two yields, or outcomes, as the immunization rate and birth in health facility rate of children. This makes sense as these two variables serve as indicators of the wellbeing of children in the country. Then our 3 predictors are the illiteracy rate, access to water rate, and antenatal care rate. 
 
-Moving forward, we will define the 5 rates above as being high, if they are greater than the grand mean (corresponding to the row for India), and low if they are less. We will create 5 new indicator variables for each rate, taking the value 1 if the rate is high, and -1 if the rate is low. This will allow us to treat the data as coming from a $2^k$ factorial design, where $k=3$ is the number of levels, with 2 outcomes. The interaction plots for each of the $k!=3!=6$ combinations below [PLOTS HERE] show that we have interactions between the following of variables, as represented by the directed acyclic graph [DAG HERE], where a variable points to a variable that it influences, treating the outcome variables as influenced by the predictor variables. Note that the outcomes also appear to have an affect on each other, where as shown by the graph [GRAPH HERE], as states with a higher birth in a health facility rate, also have a high vaccination rate. 
+Moving forward, we will define the 5 rates above as being high, if they are greater than the grand mean (corresponding to the row for India), and low if they are less. We will create 5 new indicator variables for each rate, taking the value 1 if the rate is high, and -1 if the rate is low. This will allow us to treat the data as coming from a $2^k$ factorial design, where $k=3$ is the number of levels, with 2 outcomes. The interaction plots for each of the $k!=3!=6$ combinations below in Figure 3 show that we have interactions between the following of variables (because the lines are not parallel). This is represented by the directed acyclic graph in figure 4, where a variable points to a variable that it influences, treating the outcome variables as influenced by the predictor variables.
 
+```{r, echo=FALSE}
+tiny_dhs <- tiny_dhs |>
+  mutate(illiterate = case_when(
+    `Percent of illiterate females` >= 56.7 ~ 1,
+    `Percent of illiterate females` < 56.7 ~ -1
+  ))
+
+tiny_dhs <- tiny_dhs |>
+  mutate(antenatal = case_when(
+    `Percent of mothers receiving antenatal care` >= 62.3 ~ 1,
+    `Percent of mothers receiving antenatal care` < 62.3 ~ -1
+  ))
+
+tiny_dhs <- tiny_dhs |>
+  mutate(water = case_when(
+    `Percent of households with drinking water from pipe` >= 68.2 ~ 1,
+    `Percent of households with drinking water from pipe` < 68.2 ~ -1
+  ))
+
+tiny_dhs <- tiny_dhs |>
+  mutate(births = case_when(
+    `Percent of births delivered in health facility` >= 25.5 ~ 1,
+    `Percent of births delivered in health facility` < 25.5 ~ -1
+  ))
+
+tiny_dhs <- tiny_dhs |>
+  mutate(immunized = case_when(
+    `Percent of children fully immunized` >= 35.4 ~ 1,
+    `Percent of children fully immunized` < 35.4 ~ -1
+  ))
+```
+
+```{r, echo=FALSE, fig.show="hold", out.width="50%"}
+interaction.plot(tiny_dhs$illiterate, tiny_dhs$antenatal, tiny_dhs$births, xlab="Illiteracy (high/low)", ylab="Births in Medical Facility (high/low)", trace.label = "Antenatal Care")
+interaction.plot(tiny_dhs$illiterate, tiny_dhs$antenatal, tiny_dhs$immunized, xlab="Illiteracy (high/low)", ylab="Immunization (high/low)", trace.label = "Antenatal Care")
+```
+&nbsp;
+```{r, echo=FALSE, fig.show="hold", out.width="50%"}
+interaction.plot(tiny_dhs$illiterate, tiny_dhs$water, tiny_dhs$births, xlab="Illiteracy (high/low)", ylab="Births in Medical Facility (high/low)", trace.label = "Water Access")
+interaction.plot(tiny_dhs$illiterate, tiny_dhs$water, tiny_dhs$immunized, xlab="Illiteracy (high/low)", ylab="Immunization (high/low)", trace.label = "Water Access")
+```
+&nbsp;
+```{r, echo=FALSE, fig.show="hold", out.width="50%", fig.cap="Interaction plots for each combination of predictors on outcomes"}
+interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$births, xlab="Antenatal Care (high/low)", ylab="Births in Medical Facility (high/low)", trace.label = "Water Access")
+interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$immunized, xlab="Antenatal Care (high/low)", ylab="Immunization (high/low)", trace.label = "Water Access")
+```
+
+```{r, warning=FALSE, echo=FALSE, fig.align="center", fig.cap="A directed acyclic graph showing the interaction between the 5 variables", out.width = '95%'}
+include_graphics(here::here("outputs/materials/DAG.png"))
+```
 
 # Results
 
 For all comparisons made in this section, we look at each state as a different case, i.e. an example of the conditions met in that state. Thus, we can compare between states, but not within a state, because of the nature of the data. 
 
-The first comparison we make is between the percentage of illiterate females and the percentage of vaccinated children. This will tell us the effect education of the mother has on the benefit of their child. The graph below [GRAPH HERE] shows that as illiteracy rate goes up, the rate of vaccination goes down. This seems indicative that educated women are more likely to vaccinate their children. 
+The first comparison we make is between the percentage of illiterate females and the percentage of vaccinated children. This will tell us the effect education of the mother has on the benefit of their child. The graph below in Figure 5 shows that as illiteracy rate goes up, the rate of vaccination goes down. This seems indicative that educated women are more likely to vaccinate their children. 
 
-Furthermore, we also check the relation between percentage of mothers receiving antenatal care and percentage of births delivered in a health facility. After plotting the two variables together and fitting a linear model [GRAPH HERE], we see that states with a high rate of antenatal care also have a high rate of births in a health facility. From this we can interpret that states with a priority on health care take better care of their pregnant women and children. Thus it seems likely, and is indeed the case as demonstrated by [GRAPH HERE], that states with a high illiteracy rate also have a low rate of births in a health facility.
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.cap="Graph of Illiteracy vs Immunization Rate", out.width="80%"}
+tiny_dhs |>
+  ggplot(aes(`Percent of illiterate females`, `Percent of children fully immunized`)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
 
-The overall findings from the survey are summarized in this section, as they pertain to our variables of interest. 57% of all females age 6 and above are illiterate, with about 9% having a high school education or more. 68% of households have access to some form of drinking water, from a pump or pipe. We have that 62% of mothers received special care while they were pregnant, but only 26% of mothers gave birth in medical facilities. Finally, only 35% of children were immunized. 
+Furthermore, we also check the relation between percentage of mothers receiving antenatal care and percentage of births delivered in a health facility. After plotting the two variables together and fitting a linear model in Figure 6, we see that states with a high rate of antenatal care also have a high rate of births in a health facility. From this we can interpret that states with a priority on health care take better care of their pregnant women and children. Thus it seems likely, and is indeed the case as demonstrated by Figure 7, that states with a high illiteracy rate also have a low rate of births in a health facility. Note that the outcomes also appear to have an affect on each other, where as shown by the graph Figure 7, as states with a higher birth in a health facility rate, also have a high vaccination rate. 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.cap="Graph of Antenatal Care vs Births in a Health Facility", out.width="80%"}
+tiny_dhs |>
+  ggplot(aes(`Percent of mothers receiving antenatal care`, `Percent of births delivered in health facility`)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.cap="Graph of Illiteracy vs Births in a Health Facility", out.width="80%"}
+tiny_dhs %>%
+  ggplot(aes(`Percent of illiterate females`, `Percent of births delivered in health facility`)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.cap="Graph of Immunization Rate vs Births in a Health Facility", out.width="80%"}
+tiny_dhs %>%
+  ggplot(aes(`Percent of children fully immunized`, `Percent of births delivered in health facility`)) +
+  geom_point() +
+  geom_smooth(method='lm')
+```
+
+The overall findings from the survey are summarized in this section, as they pertain to our variables of interest. 57% of all females age 6 and above are illiterate, with about 9% having a high school education or more. 68% of households have access to some form of drinking water, from a pump or pipe. We have that 62% of mothers received special care while they were pregnant, but only 26% of mothers gave birth in medical facilities. Finally, only 35% of children were immunized (@nfhs). 
 
 # Discussion
 
 Using the above findings, we observe that key areas for improvement in India’s health sector are availability of medical facilities, as we know from above that those receiving antenatal care would give birth in those facilities if they were accessible. Further, the low vaccination rate can be combatted by spreading awareness of the importance of vaccines, outside of schools, because the majority of females could not attend school to learn about them. A core, systemic, issue in India is the high poverty rate, which likely is responsible for many of the above issues alone. However, the NFHS survey failed to account for this variable. If they had recorded the economic status of their sampling units, another form of bias could be eliminated, and the results purified. Thus, in the future, accounting for this source of variation (both within and between states) can lead to more reliable results.
 
-As the study was conducted in 1992, we can compare our derived results with the actual implementations used by the Indian government since the survey took place. From (1), just over 6% of the population is left without access to water, which is a significant improvement from 100-68=32% without access in 1992. Furthermore, a huge step forward has been taken in literacy, with 65% of females now being literate, as compared to over half the population of females being illiterate previously (2). Another successful indicator is the advancements made in the health sector. In terms of immunizations, India became polio-free in 2014, and eliminated maternal tetanus in 2015 (3). Furthermore, 65% of children in India now receive vaccination during their first year of life, as compared to 35% in 1992. This was accomplished through the aid of organizations like UNICEF, whose primary goal is to ensure the health and safety of children in the country. This also demonstrates the substantial affect that international aid has on the development of a third world country. India has been continuously renewing the NFHS, with 3 more since the first one, conducted in 1998, 2005, and 2015, with further expansion on the horizon (4). 
+As the study was conducted in 1992, we can compare our derived results with the actual implementations used by the Indian government since the survey took place. From (@indiawater), just over 6% of the population is left without access to water, which is a significant improvement from 100-68=32% without access in 1992. Furthermore, a huge step forward has been taken in literacy, with 65% of females now being literate, as compared to over half the population of females being illiterate previously (@literacy). Another successful indicator is the advancements made in the health sector. In terms of immunizations, India became polio-free in 2014, and eliminated maternal tetanus in 2015 (@immunization). Furthermore, 65% of children in India now receive vaccination during their first year of life, as compared to 35% in 1992. This was accomplished through the aid of organizations like UNICEF, whose primary goal is to ensure the health and safety of children in the country. This also demonstrates the substantial affect that international aid has on the development of a third world country. India has been continuously renewing the NFHS, with 3 more since the first one, conducted in 1998, 2005, and 2015, with further expansion on the horizon (@aboutNFHS). 
 
-An issue with the survey that should be considered in the future is the lack of information collected on men. The survey primarily focused on women and children, as they are the key population indicators, but this leads to any implementations based on this survey being biased towards the demographics for who information was collected on, omitting a significant chunk of the population, males. In the twentieth century (1900s), the population ratio of females to males was 972 females to 1000 males, and that ratio increased by 10% as measured in 2011 (3). Another major holdback in conducting this survey was the large cost associated with all the necessary procedures, which also came with several hurdles as discussed in (2.2 Methodology). 
+An issue with the survey that should be considered in the future is the lack of information collected on men. The survey primarily focused on women and children, as they are the key population indicators, but this leads to any implementations based on this survey being biased towards the demographics for who information was collected on, omitting a significant chunk of the population, males. In the twentieth century (1900s), the population ratio of females to males was 972 females to 1000 males, and that ratio increased by 10% as measured in 2011 (@sex). Another major holdback in conducting this survey was the large cost associated with all the necessary procedures, which also came with several hurdles as discussed in (2.2 Methodology). 
 
-To facilitate the delivery of the survey, the NFHS team may consider administering it online. When the survey was initially conducted in 1992, nearly the entire population did not have access to any form of internet communication, but now, as of 2019, over 41% of the population is online (5). As demonstrated by organizations like Statistics Canada, it’s the least expensive mode, and it can be used to reach a very large number of people (6). The respondent can fill the survey at the moment of his choice. Self-completed (i.e. online) questionnaires are also easier when the survey questions are sensitive, such as some of the topics covered by the NFHS. The downside of this mode is that response rates are lower than for other collection mode and the quality of collected data can suffer (6). Despite the detriments, it is still advisable out of the interest of safety, especially to avoid key areas that were missed because of uncharted terrain and potential threats in various villages. 
+To facilitate the delivery of the survey, the NFHS team may consider administering it online. When the survey was initially conducted in 1992, nearly the entire population did not have access to any form of internet communication, but now, as of 2019, over 41% of the population is online (@internet). As demonstrated by organizations like Statistics Canada, it’s the least expensive mode, and it can be used to reach a very large number of people (@statcan). The respondent can fill the survey at the moment of his choice. Self-completed (i.e. online) questionnaires are also easier when the survey questions are sensitive, such as some of the topics covered by the NFHS. The downside of this mode is that response rates are lower than for other collection mode and the quality of collected data can suffer (@statcan). Despite the detriments, it is still advisable out of the interest of safety, especially to avoid key areas that were missed because of uncharted terrain and potential threats in various villages. 
 
 In conclusion, we began with the goal to demonstrate how data analysis can and should be used to gain an understanding of the overall population status of a country. Then we discuss how to use this information to make decisions that better the lives of the citizens. Third world countries can and should acquire large datasets representative of their population, and employ the techniques discussed in this paper, and the NFHS Final Report, to induce modifications to their public policies in such a way that the needs of the many are satisfied. Thus illuminating the path towards further development of that country with the goal of economic prosperity. In short, the inductive application of data deduction fosters the grounds for which a country may stem its roots, and make a plan to grow.
 
@@ -220,9 +315,15 @@ In conclusion, we began with the goal to demonstrate how data analysis can and s
 
 Code and data are available at: https://github.com/haqbilal/India-1992-DHS-State-Findings
 
+You can clone the repository and reproduce the paper as needed, and are encouraged to conduct your own analysis. We used 00-simulation.R to create a simulation of the data, and develop a plan to assess. Then we gathered the data using 01-gather_data.R and cleaned it using 02-clean_and_prepare.R. Each script is documented, explaining each step in the process. Please note that obtaining and cleaning the dataset is difficult in an OCR’d PDF because of misrecognition of characters, the table spanning two pages, and the column headings spanning multiple lines. 
+
 \newpage
 
 
 # References
 
+---
+nocite: |
+  @citeggplot2, @citepdftools, @citetidyverse, @citepointblank, @citediagrammer, @citereshape2, @citehere, @citeknitr, @citeddknitr, @citeIRCPknitr, @citepatchwork
+---
 

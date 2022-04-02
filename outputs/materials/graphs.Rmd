@@ -78,13 +78,18 @@ digraph {
   graph [ranksep = 0.2]
   node [shape = plaintext, fontsize = 10, fontname = Helvetica]
     Illiterate
-    ORS
+    Antenatal
+    Water
+    Births
     Immunized
   edge [minlen = 2, arrowhead = vee]
-    Illiterate->ORS
     Illiterate->Immunized
-    ORS->Immunized
-  { rank = same; Illiterate; ORS }
+    Illiterate->Births
+    Antenatal->Immunized
+    Antenatal->Births
+    Water->Immunized
+    Illiterate->Antenatal
+  { rank = same; Immunized; Births }
 }
 ", height = 300)
 ```
@@ -203,8 +208,8 @@ nigib2 %>%
   coord_flip()
 
 #Illiterate females v/s antenatal care
-nigib1 <- data.frame(tiny_dhs$States, tiny_dhs$`Percent of illiterate females`, tiny_dhs$`Percent of mothers receiving antenatal care`)
-colnames(nigib1) <- c("States", "Illiterate Females", "Antenatal Care")
+nigib1 <- data.frame(tiny_dhs$States, tiny_dhs$`Percent of illiterate females`, tiny_dhs$`Percent of mothers receiving antenatal care`, tiny_dhs$`Percent of households with drinking water from pipe`, tiny_dhs$`Percent of births delivered in health facility`, tiny_dhs$`Percent of children fully immunized`)
+colnames(nigib1) <- c("States", "Illiterate Females", "Antenatal Care", "Water", "Births", "Immunized")
 nigib2 <- reshape2::melt(nigib1, id.vars = 'States')
 
 nigib2 %>%
