@@ -1,8 +1,8 @@
 ---
 title: "Now That's Fresh Water"
-subtitle: "Trends in India from the 1992 Demographic and Health Surve"
-author: Bilal Haq and Ritvik Puri
+subtitle: "Trends in India from the 1992 Demographic and Health Survey"
 thanks: "Code and data are available at: https://github.com/haqbilal/India-1992-DHS-State-Findings"
+author: Bilal Haq and Ritvik Puri
 date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 output:
@@ -25,10 +25,9 @@ The release of this report came with a call from the IIPS for further analyses o
 
 The report onwards features three sections. Firstly, we look at the dataset provided on pages 31-32 of the NFHS 1992 Final Report. Plots and directed acyclic graphs are used to visualize the data and relationship between variables. Moving on, we share our findings and the implications of results and the effect they might have on public policy in India. We also align our own findings with those of the NFHS, and analyze the progress made over the last 20 years, demonstrating the effect that data analysis has had on the development of the country. Finally, we discuss the methodology used by the NFHS and describe how they were effective in achieving their goal. We also propose some critiques that can aid in the future of data analysis in India and other third world countries following in their footsteps. Our report is carried out using R [@citeR], alongside various libraries cited (see References). R markdown [@citeRMD] was used for compilation and presentation.
 
-
 # Data
 
-## The Dataset and Variables
+## Dataset and Variables
 
 The NFHS’s final report from 1992 is publicly hosted on the DHS program’s website in PDF format. The data has been sourced in a reproducible way, with a script for downloading and obtaining the relevant datasets. It is an in-depth review of statistics such as access to clean water and amenities, fertility, family planning, child care, and health, on a sample of women and children, with the goal being to summarize the status of women and children, as key factors towards growth of the country, while identifying any present flaws, in hopes of administering aid where possible. In terms of privacy, no underlying information has been kept that could point towards or reveal any individual that took part in the survey. Note that a constraint of this dataset is that it cannot be truly compared to similar reports from other organizations, because of differing methods in categorization as well as geographic stratification. Time constraints may also affect results from different surveys. 
 
@@ -36,7 +35,7 @@ Our focus is on the state findings table on pages 31-32 of the report. The full 
 
 ## Methodology
 
-In formulating the survey questionnaires (see Appendix B), a Questionnaire Design Workshop was held in Pune, September 1991. There, representatives from IIPS and other organizations such as USAID, designed the contents, which were designed with India’s low contraceptive prevalence in mind. Modifications were made to the questionnaire that kept in consideration the Indian social and cultural environment as well as the NFHS objectives. Individual states also included state-specific questions pertaining to issues of importance in those regions. Three questionnaires were created; the Household Questionnaire, Woman’s Questionnaire, and Village Questionnaire. 
+In formulating the survey questionnaires (see Appendix F of the NFHS final report), a Questionnaire Design Workshop was held in Pune, September 1991. There, representatives from IIPS and other organizations such as USAID, designed the contents, which were designed with India’s low contraceptive prevalence in mind. Modifications were made to the questionnaire that kept in consideration the Indian social and cultural environment as well as the NFHS objectives. Individual states also included state-specific questions pertaining to issues of importance in those regions. Three questionnaires were created; the Household Questionnaire, Woman’s Questionnaire, and Village Questionnaire. 
 
 The Household Questionnaire listed counts of residents in each sample household, and visitors who stayed from the night before. Information collected included age, sex, marital status, education, occupation, and household conditions such as access to water and toilets. It’s main purpose was to identify women eligible to participate in the Woman’s Questionnaire (women in between 13-49 years of age). The Woman’s Questionnaire then gathered information on the respondents’ background, reproduction (i.e. births given), contraception, health of children, fertility preferences (i.e. desire for children), and nutritional status of children (i.e. height and weight). Lastly, the Village Questionnaire collected data on the amenities accessible to villages, such as electricity, water, transport, and educational and health facilities.
 
@@ -44,41 +43,36 @@ A three-stage sample design was used in each state: first selecting cities, then
 
 The methodology was prone to one major weakness, accessibility of the survey. Data collection teams were noted to struggle in reaching sampling units located in hilly regions, due to lack of roads and other transportation. For example, in the state Uttar Pradesh, teams covered the sampling units on foot. Further, security was another concern. During December 1992, communal riots caused the presence of bandits in some villages. In this case, sampling units in Madhya Pradesh were avoided, and the data collection could not be fully completed. Moreover, unseasonal rains that were not forecast delayed data collection in Karnataka, Kerala, and other Northeastern states. Lastly, teams failed to establish contact with some households, and as many as possible were attempted a second time at a later date to minimize the nonresponse rate, however in some cases it was unavoidable. 
 
-## Visualizations
+## Visualization
+
+For brevity, we will refer to the percentages of illiterate females, households with drinking water, mothers receiving antenatal care, births delivered in a health facility, and fully immunized children, as illiteracy rate, drinking water rate, antenatal care rate, births in health facility rate, and immunization rate.
+
+Now we study is the interaction between our variables. That is, if a change in one is affecting a change in another, on some outcome. To aid in this process, we define our two yields, or outcomes, as the immunization rate and birth in health facility rate of children. This makes sense as these two variables serve as indicators of the wellbeing of children in the country. Then our 3 predictors are the illiteracy rate, access to water rate, and antenatal care rate. 
+
+Moving forward, we will define the 5 rates above as being high, if they are greater than the grand mean (corresponding to the row for India), and low if they are less. We will create 5 new indicator variables for each rate, taking the value 1 if the rate is high, and -1 if the rate is low. This will allow us to treat the data as coming from a $2^k$ factorial design, where $k=3$ is the number of levels, with 2 outcomes. The interaction plots for each of the $k!=3!=6$ combinations below [PLOTS HERE] show that we have interactions between the following of variables, as represented by the directed acyclic graph [DAG HERE], where a variable points to a variable that it influences, treating the outcome variables as influenced by the predictor variables. Note that the outcomes also appear to have an affect on each other, where as shown by the graph [GRAPH HERE], as states with a higher birth in a health facility rate, also have a high vaccination rate. 
+
+
+# Results
 
 For all comparisons made in this section, we look at each state as a different case, i.e. an example of the conditions met in that state. Thus, we can compare between states, but not within a state, because of the nature of the data. 
 
 The first comparison we make is between the percentage of illiterate females and the percentage of vaccinated children. This will tell us the effect education of the mother has on the benefit of their child. The graph below [GRAPH HERE] shows that as illiteracy rate goes up, the rate of vaccination goes down. This seems indicative that educated women are more likely to vaccinate their children. 
 
-Furthermore, we also want to check the relation between percentage of mothers receiving antenatal care and percentage of births delivered in a health facility. After plotting the two variables together and fitting a linear model [GRAPH HERE], we see that states with a high rate of antenatal care also have a high rate of births in a health facility. From this we can interpret that states with a priority on health care take better care of their pregnant women and children. Thus it seems likely, and is indeed the case as demonstrated by [GRAPH HERE], that states with a high illiteracy rate also have a low rate of births in a health facility.
+Furthermore, we also check the relation between percentage of mothers receiving antenatal care and percentage of births delivered in a health facility. After plotting the two variables together and fitting a linear model [GRAPH HERE], we see that states with a high rate of antenatal care also have a high rate of births in a health facility. From this we can interpret that states with a priority on health care take better care of their pregnant women and children. Thus it seems likely, and is indeed the case as demonstrated by [GRAPH HERE], that states with a high illiteracy rate also have a low rate of births in a health facility.
 
-Another type of relation we want to study is the interaction between our variables. That is, we want to know if a change in one is affecting a change in another, on the yield of a third. To aid in this process, we define our two yields, or outcomes, as the immunization rate and birth in health facility rate of children. This makes sense as these two variables serve as indicators of the wellbeing of children in the country. Then our 3 predictors are the illiteracy rate, access to water rate, and antenatal care rate. 
-
-Moving forward, we will define the 5 rates above as being high, if they are greater than the grand mean (corresponding to the row for India), and low if they are less. We will create 5 new indicator variables for each rate, taking the value 1 if the rate is high, and -1 if the rate is low. This will allow us to treat the data as coming from a $2^k$ factorial design, where $k=3$ is the number of levels, with 2 outcomes. The interaction plots for each of the $k!=3!=6$ combinations below [PLOTS HERE] show that we have interactions between the following of variables, as represented by the directed acyclic graph [DAG HERE], where a variable points to a variable that it influences, treating the outcome variables as influenced by the predictor variables. Note that the outcomes also appear to have an affect on each other, where as shown by the graph [GRAPH HERE], as states with a higher birth in a health facility rate, also have a high vaccination rate. 
-
-## Summaries
-
-The overall findings from the survey are summarized in this section, as they pertain to our variables of interest. 57% of all females age 6 and above are illiterate, with about 9% having a high school education or more. 68% of households have access to some form of drinking water, from a pump or pipe. We have that 62% of mothers received special care while they were pregnant, but only 26% of mothers gave birth in medical facilities. Finally, only 35% of children were immunized. Using these findings, we can see that key areas for improvement in India’s health sector are availability of medical facilities, as we know from above that those receiving antenatal care would give birth in those facilities if they were accessible. Further, the low vaccination rate can be combatted by spreading awareness of the importance of vaccines, outside of schools, because the majority of females could not attend school to learn about them. A core, systemic, issue in India is the high poverty rate, which likely is responsible for many of the above issues alone. However, the NFHS survey failed to account for this variable. If they had recorded the economic status of their sampling units, another form of bias could be eliminated, and the results purified. Thus, in the future, accounting for this source of variation (both within and between states) can lead to more reliable results.
-
-
-# Results
-
-Requirements:
-- Summary statistics
-- Tables, graphs, images, maps
-- Statistical analysis of the above
-- Associated text with all figures
-- Plot results where possible and talk about them
-- Strictly relay results (regression tables must not contain stars)
+The overall findings from the survey are summarized in this section, as they pertain to our variables of interest. 57% of all females age 6 and above are illiterate, with about 9% having a high school education or more. 68% of households have access to some form of drinking water, from a pump or pipe. We have that 62% of mothers received special care while they were pregnant, but only 26% of mothers gave birth in medical facilities. Finally, only 35% of children were immunized. 
 
 # Discussion
 
-Requirements (each is a half-page subsection):
-- What is done in this paper?
-- What is something that we learn about the world?
-- What is another thing that we learn about the world?
-- What are some strengths and weaknesses of what was done?
-- What is left to learn or how should we proceed in the future?
+Using the above findings, we observe that key areas for improvement in India’s health sector are availability of medical facilities, as we know from above that those receiving antenatal care would give birth in those facilities if they were accessible. Further, the low vaccination rate can be combatted by spreading awareness of the importance of vaccines, outside of schools, because the majority of females could not attend school to learn about them. A core, systemic, issue in India is the high poverty rate, which likely is responsible for many of the above issues alone. However, the NFHS survey failed to account for this variable. If they had recorded the economic status of their sampling units, another form of bias could be eliminated, and the results purified. Thus, in the future, accounting for this source of variation (both within and between states) can lead to more reliable results.
+
+As the study was conducted in 1992, we can compare our derived results with the actual implementations used by the Indian government since the survey took place. From (1), just over 6% of the population is left without access to water, which is a significant improvement from 100-68=32% without access in 1992. Furthermore, a huge step forward has been taken in literacy, with 65% of females now being literate, as compared to over half the population of females being illiterate previously (2). Another successful indicator is the advancements made in the health sector. In terms of immunizations, India became polio-free in 2014, and eliminated maternal tetanus in 2015 (3). Furthermore, 65% of children in India now receive vaccination during their first year of life, as compared to 35% in 1992. This was accomplished through the aid of organizations like UNICEF, whose primary goal is to ensure the health and safety of children in the country. This also demonstrates the substantial affect that international aid has on the development of a third world country. India has been continuously renewing the NFHS, with 3 more since the first one, conducted in 1998, 2005, and 2015, with further expansion on the horizon (4). 
+
+An issue with the survey that should be considered in the future is the lack of information collected on men. The survey primarily focused on women and children, as they are the key population indicators, but this leads to any implementations based on this survey being biased towards the demographics for who information was collected on, omitting a significant chunk of the population, males. In the twentieth century (1900s), the population ratio of females to males was 972 females to 1000 males, and that ratio increased by 10% as measured in 2011 (3). Another major holdback in conducting this survey was the large cost associated with all the necessary procedures, which also came with several hurdles as discussed in (2.2 Methodology). 
+
+To facilitate the delivery of the survey, the NFHS team may consider administering it online. When the survey was initially conducted in 1992, nearly the entire population did not have access to any form of internet communication, but now, as of 2019, over 41% of the population is online (5). As demonstrated by organizations like Statistics Canada, it’s the least expensive mode, and it can be used to reach a very large number of people (6). The respondent can fill the survey at the moment of his choice. Self-completed (i.e. online) questionnaires are also easier when the survey questions are sensitive, such as some of the topics covered by the NFHS. The downside of this mode is that response rates are lower than for other collection mode and the quality of collected data can suffer (6). Despite the detriments, it is still advisable out of the interest of safety, especially to avoid key areas that were missed because of uncharted terrain and potential threats in various villages. 
+
+In conclusion, we began with the goal to demonstrate how data analysis can and should be used to gain an understanding of the overall population status of a country. Then we discuss how to use this information to make decisions that better the lives of the citizens. Third world countries can and should acquire large datasets representative of their population, and employ the techniques discussed in this paper, and the NFHS Final Report, to induce modifications to their public policies in such a way that the needs of the many are satisfied. Thus illuminating the path towards further development of that country with the goal of economic prosperity. In short, the inductive application of data deduction fosters the grounds for which a country may stem its roots, and make a plan to grow.
 
 \newpage
 
@@ -90,10 +84,141 @@ Requirements (each is a half-page subsection):
 
 # Appendix {-}
 
+# Datasheet
 
+**Motivation**
+
+1. *For what purpose was the dataset created? Was there a specific task in mind? Was there a specific gap that needed to be filled? Please provide a description.*
+    - The dataset was created to strengthen the capabilities of the population research centres in India. 
+2. *Who created the dataset (for example, which team, research group) and on behalf of which entity (for example, company, institution, organization)?*
+    - The dataset was created by the Ministry of Health and Family Welfare, alongside the International Institute for Population Sciences.
+3. *Who funded the creation of the dataset? If there is an associated grant, please provide the name of the grantor and the grant name and number.*
+    - The creation was funded by the Government of India.
+4. *Any other comments?*
+    - The NFHS was one of the most complete surveys of its kind ever conducted in India, at the time (1992). As a result, it provided a huge amount of population-wise information that could otherwise not be determined.
+
+**Composition**
+
+1. *What do the instances that comprise the dataset represent (for example, documents, photos, people, countries)? Are there multiple types of instances (for example, movies, users, and ratings; people and interactions between them; nodes and edges)? Please provide a description.*
+	- The instances represent the states of India. The types are: North, Northeast, West, East, South, and Central, corresponding to different regions of the country.
+2. *How many instances are there in total (of each type, if appropriate)?*
+	- There are 26 instances
+3. *Does the dataset contain all possible instances or is it a sample (not necessarily random) of instances from a larger set? If the dataset is a sample, then what is the larger set? Is the sample representative of the larger set (for example, geographic coverage)? If so, please describe how this representativeness was validated/verified. If it is not representative of the larger set, please describe why not (for example, to cover a more diverse range of instances, because instances were withheld or unavailable).*
+	- Since every state, at the time of this dataset, was included, the dataset does contain all possible instances.
+4. *What data does each instance consist of? "Raw" data (for example, unprocessed text or images) or features? In either case, please provide a description.*
+	- Each instance consists of 23 continuous variables (raw data), and 1 feature (the state represented). TODO: DEFINE ALL THE COLUMNS AND GIVE EXPLANATIONS?
+5. *Is there a label or target associated with each instance? If so, please provide a description.*
+	- The first column of each instance corresponds to the state it represents, which is the label associated with it.
+6. *Is any information missing from individual instances? If so, please provide a description, explaining why this information is missing (for example, because it was unavailable). This does not include intentionally removed information, but might include, for example, redacted text.*
+	- 5 instances contain cases of missing information. In each case, the missing values are due to unavailable data. Namely, Himachal Pradesh, Madhya Pradesh, West Bengal, Tamil Nadu and Andhra Pradesh are all missing `Percent of Children Stunted` and `Percent of Children Wasted`.
+7. *Are relationships between individual instances made explicit (for example, users' movie ratings, social network links)? If so, please describe how these relationships are made explicit.*
+	- There are no relationships between individual instances.
+8. *Are there recommended data splits (for example, training, development/validation, testing)? If so, please provide a description of these splits, explaining the rationale behind them.*
+	- There are no recommended data splits.
+9. *Are there any errors, sources of noise, or redundancies in the dataset? If so, please provide a description.*
+	- There are no errors, sources of noise, or redundancies in the dataset.
+10. *Is the dataset self-contained, or does it link to or otherwise rely on external resources (for example, websites, tweets, other datasets)? If it links to or relies on external resources, a) are there guarantees that they will exist, and remain constant, over time; b) are there official archival versions of the complete dataset (that is, including the external resources as they existed at the time the dataset was created); c) are there any restrictions (for example, licenses, fees) associated with any of the external resources that might apply to a dataset consumer? Please provide descriptions of all external resources and any restrictions associated with them, as well as links or other access points, as appropriate.*
+	- The dataset is self-contained.
+11. *Does the dataset contain data that might be considered confidential (for example, data that is protected by legal privilege or by doctor-patient confidentiality, data that includes the content of individuals' non-public communications)? If so, please provide a description.*
+	- There is no confidential data, and the dataset is publicly available.
+12. *Does the dataset contain data that, if viewed directly, might be offensive, insulting, threatening, or might otherwise cause anxiety? If so, please describe why.*
+	- Columns that might cause anxiety include: `Percent of women age 20-24 married before age 18`, due to systemic norms in the Western society, and `Percent of living children under four years of age wasted` because of the dismal implications of that heading.
+13. *Does the dataset identify any sub-populations (for example, by age, gender)? If so, please describe how these subpopulations are identified and provide a description of their respective distributions within the dataset.*
+	- The dataset entirely comprises women and children 4 years and less. 
+14. *Is it possible to identify individuals (that is, one or more natural persons), either directly or indirectly (that is, in combination with other data) from the dataset? If so, please describe how.*
+	- It is not possible to identify individuals in any way.
+15. *Does the dataset contain data that might be considered sensitive in any way (for example, data that reveals race or ethnic origins, sexual orientations, religious beliefs, political opinions or union memberships, or locations; financial or health data; biometric or genetic data; forms of government identification, such as social security numbers; criminal history)? If so, please provide a description.*
+	- Sensitive columns may include but are not limited to: `Percent of women age 20-24 married before age 18`.
+16. *Any other comments?*
+	- None.
+
+**Collection process**
+
+1. *How was the data associated with each instance acquired? Was the data directly observable (for example, raw text, movie ratings), reported by subjects (for example, survey responses), or indirectly inferred/derived from other data (for example, part-of-speech tags, model-based guesses for age or language)? If the data was reported by subjects or indirectly inferred/derived from other data, was the data validated/verified? If so, please describe how.*
+	- The data associated was reported by subjects through interviews from all 25 states.
+2. *What mechanisms or procedures were used to collect the data (for example, hardware apparatuses or sensors, manual human curation, software programs, software APIs)? How were these mechanisms or procedures validated?*
+	- Manual human curation, i.e. the process of humans taking down the information given during interviews, was used to collect the data.
+3. *If the dataset is a sample from a larger set, what was the sampling strategy (for example, deterministic, probabilistic with specific sampling probabilities)?*
+	-Geographic stratification subdivided each state into regions, from which villages were further stratified following: village size, distance from nearest town, proportion of nonagricultural workers, proportion of the population belonging to scheduled casts, and female literacy. Primary Sampling Units were selected systematically, with probability proportional to size of the strata. 
+4. *Who was involved in the data collection process (for example, students, crowdworkers, contractors) and how were they compensated (for example, how much were crowdworkers paid)?*
+	- The operations were supervised by the senior field staff of the concerned CO and PRC in each state. Compensation data is not available.
+5. *Over what timeframe was the data collected? Does this timeframe match the creation timeframe of the data associated with the instances (for example, recent crawl of old news articles)? If not, please describe the timeframe in which the data associated with the instances was created.*
+	- The data was collected over April 1992 to September 1993.
+6. *Were any ethical review processes conducted (for example, by an institutional review board)? If so, please provide a description of these review processes, including the outcomes, as well as a link or other access point to any supporting documentation.*
+	- Ethical review processes were not conducted.
+7. *Did you collect the data from the individuals in question directly, or obtain it via third parties or other sources (for example, websites)?*
+	- We obtained the data via the Demographic and Health Surveys website: dhsprogram.com
+8. *Were the individuals in question notified about the data collection? If so, please describe (or show with screenshots or other information) how notice was provided, and provide a link or other access point to, or otherwise reproduce, the exact language of the notification itself.*
+	- The individuals voluntarily interviewed with data collectors. The notice of data collection is not available.
+9. *Did the individuals in question consent to the collection and use of their data? If so, please describe (or show with screenshots or other information) how consent was requested and provided, and provide a link or other access point to, or otherwise reproduce, the exact language to which the individuals consented.*
+	- The individuals consented to the collection and use of their data. The exact language to which consent was granted is not available.
+10. *If consent was obtained, were the consenting individuals provided with a mechanism to revoke their consent in the future or for certain uses? If so, please provide a description, as well as a link or other access point to the mechanism (if appropriate).*
+	- A mechanism to revkoe consent was not provided.
+11. *Has an analysis of the potential impact of the dataset and its use on data subjects (for example, a data protection impact analysis) been conducted? If so, please provide a description of this analysis, including the outcomes, as well as a link or other access point to any supporting documentation.*
+	- An analysis of the potential impact of the dataset and its use on data subjects was not conducted.
+12. *Any other comments?*
+	- Note that the population primarily consists of younger people due to the population composition of India in 1992.
+
+**Preprocessing/cleaning/labeling**
+
+1. *Was any preprocessing/cleaning/labeling of the data done (for example, discretization or bucketing, tokenization, part-of-speech tagging, SIFT feature extraction, removal of instances, processing of missing values)? If so, please provide a description. If not, you may skip the remaining questions in this section.*
+	- The data was originally obtained in PDF format. The table from the survey PDF was converted to a usable data frame in R using the library pdftools for R.
+2. *Was the "raw" data saved in addition to the preprocessed/cleaned/labeled data (for example, to support unanticipated future uses)? If so, please provide a link or other access point to the "raw" data.*
+	- The raw data obtained from the PDF is saved in inputs/data/raw_data.csv
+3. *Is the software that was used to preprocess/clean/label the data available? If so, please provide a link or other access point.*
+	- R Software is avalaible at https://www.R-project.org/
+4. *Any other comments?*
+	- The library used to help import data from PDF is available at https://docs.ropensci.org/pdftools/
+
+**Uses**
+
+1. *Has the dataset been used for any tasks already? If so, please provide a description.*
+	- The dataset has not been used for other tasks yet.
+2. *Is there a repository that links to any or all papers or systems that use the dataset? If so, please provide a link or other access point.*
+	- https://github.com/haqbilal/India-1992-DHS-State-Findings
+3. *What (other) tasks could the dataset be used for?*
+	- The dataset can be used for examining the state of women and children in India in 1992-1993.
+4. *Is there anything about the composition of the dataset or the way it was collected and preprocessed/cleaned/labeled that might impact future uses? For example, is there anything that a dataset consumer might need to know to avoid uses that could result in unfair treatment of individuals or groups (for example, stereotyping, quality of service issues) or other risks or harms (for example, legal risks, financial harms)? If so, please provide a description. Is there anything a dataset consumer could do to mitigate these risks or harms?*
+	- The cleaning process is very specific to the way this table was formatted in the original PDF and may not work on other tables. 
+5. *Are there tasks for which the dataset should not be used? If so, please provide a description.*
+	- The dataset would not be appropriate for purposes other than examining the plight of women and children in 1992 India.
+
+**Distribution**
+
+1. *Will the dataset be distributed to third parties outside of the entity (for example, company, institution, organization) on behalf of which the dataset was created? If so, please provide a description.*
+	- No, the dataset is openly available and being used for personal uses only.
+2. *How will the dataset be distributed (for example, tarball on website, API, GitHub)? Does the dataset have a digital object identifier (DOI)?*
+	- The dataset will be distributed using Github.
+3. *When will the dataset be distributed?*
+	- The dataset will be distributed in April 2022.
+4. *Will the dataset be distributed under a copyright or other intellectual property (IP) license, and/or under applicable terms of use (ToU)? If so, please describe this license and/ or ToU, and provide a link or other access point to, or otherwise reproduce, any relevant licensing terms or ToU, as well as any fees associated with these restrictions.*
+	- The dataset will be released under the MIT license
+5. *Have any third parties imposed IP-based or other restrictions on the data associated with the instances? If so, please describe these restrictions, and provide a link or other access point to, or otherwise reproduce, any relevant licensing terms, as well as any fees associated with these restrictions.*
+	- There are no restrictions
+6. *Do any export controls or other regulatory restrictions apply to the dataset or to individual instances? If so, please describe these restrictions, and provide a link or other access point to, or otherwise reproduce, any supporting documentation.*
+	- No such controls or restrictions are applicable.
+7. *Any other comments?*
+
+**Maintenance**
+
+1. *Who will be supporting/hosting/maintaining the dataset?*
+	- Bilal Haq and Ritvik Puri
+2. *How can the owner/curator/manager of the dataset be contacted (for example, email address)?*
+	- Can be contacted via github
+3. *Is there an erratum? If so, please provide a link or other access point.*
+	- There is no erratum available currently.
+4. *Will the dataset be updated (for example, to correct labeling errors, add new instances, delete instances)? If so, please describe how often, by whom, and how updates will be communicated to dataset consumers (for example, mailing list, GitHub)?*
+	- Currently there is no plan of updating the dataset. If there are updates in the future, it will be done through Github.
+5. *If the dataset relates to people, are there applicable limits on the retention of the data associated with the instances (for example, were the individuals in question told that their data would be retained for a fixed period of time and then deleted)? If so, please describe these limits and explain how they will be enforced.*
+	- The dataset was made via survey findings conducted in India. There are no applicable limits as the people took part voluntarily.
+6. *Will older versions of the dataset continue to be supported/hosted/maintained? If so, please describe how. If not, please describe how its obsolescence will be communicated to dataset consumers.*
+	- The older versions would not be hosted. Dataset consumers will be able to check whether the dataset has been updated through Github commit history.
+7. *If others want to extend/augment/build on/contribute to the dataset, is there a mechanism for them to do so? If so, please provide a description. Will these contributions be validated/verified? If so, please describe how. If not, why not? Is there a process for communicating/distributing these contributions to dataset consumers? If so, please provide a description.*
+	- There is no mechanism for accepting contribtuions from other users as of now.
 
 # Additional details
 
+Code and data are available at: https://github.com/haqbilal/India-1992-DHS-State-Findings
 
 \newpage
 

@@ -139,7 +139,7 @@ Extract of the questions from @gebru2021datasheets
 1. *Who will be supporting/hosting/maintaining the dataset?*
 	- Bilal Haq and Ritvik Puri
 2. *How can the owner/curator/manager of the dataset be contacted (for example, email address)?*
-	- Can be contacted via email at bilalhaq1219@gmail.com
+	- Can be contacted via github
 3. *Is there an erratum? If so, please provide a link or other access point.*
 	- There is no erratum available currently.
 4. *Will the dataset be updated (for example, to correct labeling errors, add new instances, delete instances)? If so, please describe how often, by whom, and how updates will be communicated to dataset consumers (for example, mailing list, GitHub)?*
