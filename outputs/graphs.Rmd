@@ -10,6 +10,7 @@ library(DiagrammeR)
 library(reshape2)
 library(here)
 library(knitr)
+library(patchwork)
 
 dhs <- read_csv(here::here("inputs/data/cleaned_data.csv"), show_col_types = FALSE)
 ```
@@ -18,7 +19,7 @@ Graphs
 ```{r}
 # Illiterate females get married early
 dhs %>%
-  ggplot(aes(`Percent of illiterate females`, `Percent of women married before age 18`, color = states)) +
+  ggplot(aes(`Percent of illiterate females`, `Percent of women married before age 18`, color = States)) +
   geom_point()
 
 # Illiteracy has no connection to contraceptives? 
@@ -29,7 +30,7 @@ dhs %>%
 
 # Women going to school in each state
 dhs %>%
-  ggplot(aes(x=states, y=`Percent of females attending schools`)) +
+  ggplot(aes(x=States, y=`Percent of females attending schools`)) +
   geom_bar(stat = "identity") +
   coord_flip() +
   theme_bw()
@@ -91,7 +92,7 @@ digraph {
 
 ```{r}
 #States with household toilet & water pipes
-nigib1 <- data.frame(dhs$states, dhs$`Percent of households with drinking water from pipe`, dhs$`Percent of households with no toilet facility`)
+nigib1 <- data.frame(dhs$States, dhs$`Percent of households with drinking water from pipe`, dhs$`Percent of households with no toilet facility`)
 colnames(nigib1) <- c("States", "Water", "Toilets")
 nigib2 <- reshape2::melt(nigib1, id.vars = 'States')
 
@@ -105,10 +106,9 @@ nigib2 %>%
 
 ```{r}
 # Per state, underwight stunted and wasted children
-nigib1 <- data.frame(dhs$states, dhs$`Percent of children underweight`, dhs$`Percent of children stunted`, dhs$`Percent of children wasted`)
+nigib1 <- data.frame(dhs$States, dhs$`Percent of children underweight`, dhs$`Percent of children stunted`, dhs$`Percent of children wasted`)
 colnames(nigib1) <- c("States", "Underwight", "Stunted", "Wasted")
 nigib2 <- reshape2::melt(nigib1, id.vars = 'States')
-
 
 nigib2 %>%
   ggplot(aes(x = States, y = value, fill=variable)) +
@@ -117,7 +117,7 @@ nigib2 %>%
 ```
 
 ```{r}
-tiny_dhs <- dhs |>
+tiny_dhs <- dhs %>%
   select(c(1, 2, 4, 14, 16, 19))
 ```
 
@@ -126,52 +126,52 @@ kable(head(tiny_dhs, 5))
 ```
 
 ```{r}
-tiny_dhs |>
+tiny_dhs %>%
   ggplot(aes(`Percent of illiterate females`, `Percent of children fully immunized`)) +
   geom_point() +
   geom_smooth(method='lm')
 ```
 
 ```{r}
-tiny_dhs |>
+tiny_dhs %>%
   ggplot(aes(`Percent of mothers receiving antenatal care`, `Percent of births delivered in health facility`)) +
   geom_point() +
   geom_smooth(method='lm')
 ```
 
 ```{r}
-tiny_dhs |>
+tiny_dhs %>%
   ggplot(aes(`Percent of illiterate females`, `Percent of births delivered in health facility`)) +
   geom_point() +
   geom_smooth(method='lm')
 ```
 
 ```{r}
-tiny_dhs <- tiny_dhs |>
+tiny_dhs <- tiny_dhs %>%
   mutate(illiterate = case_when(
     `Percent of illiterate females` >= 56.7 ~ 1,
     `Percent of illiterate females` < 56.7 ~ -1
   ))
 
-tiny_dhs <- tiny_dhs |>
+tiny_dhs <- tiny_dhs %>%
   mutate(antenatal = case_when(
     `Percent of mothers receiving antenatal care` >= 62.3 ~ 1,
     `Percent of mothers receiving antenatal care` < 62.3 ~ -1
   ))
 
-tiny_dhs <- tiny_dhs |>
+tiny_dhs <- tiny_dhs %>%
   mutate(water = case_when(
     `Percent of households with drinking water from pipe` >= 68.2 ~ 1,
     `Percent of households with drinking water from pipe` < 68.2 ~ -1
   ))
 
-tiny_dhs <- tiny_dhs |>
+tiny_dhs <- tiny_dhs %>%
   mutate(births = case_when(
     `Percent of births delivered in health facility` >= 25.5 ~ 1,
     `Percent of births delivered in health facility` < 25.5 ~ -1
   ))
 
-tiny_dhs <- tiny_dhs |>
+tiny_dhs <- tiny_dhs %>%
   mutate(immunized = case_when(
     `Percent of children fully immunized` >= 35.4 ~ 1,
     `Percent of children fully immunized` < 35.4 ~ -1
@@ -179,14 +179,53 @@ tiny_dhs <- tiny_dhs |>
 ```
 
 ```{r}
-interaction.plot(tiny_dhs$illiterate, tiny_dhs$antenatal, tiny_dhs$births)
-interaction.plot(tiny_dhs$illiterate, tiny_dhs$antenatal, tiny_dhs$immunized)
+ip1 <- interaction.plot(tiny_dhs$illiterate, tiny_dhs$antenatal, tiny_dhs$births)
+ip2 <- interaction.plot(tiny_dhs$illiterate, tiny_dhs$antenatal, tiny_dhs$immunized)
 
-interaction.plot(tiny_dhs$illiterate, tiny_dhs$water, tiny_dhs$births)
-interaction.plot(tiny_dhs$illiterate, tiny_dhs$water, tiny_dhs$immunized)
+ip3 <- interaction.plot(tiny_dhs$illiterate, tiny_dhs$water, tiny_dhs$births)
+ip4 <- interaction.plot(tiny_dhs$illiterate, tiny_dhs$water, tiny_dhs$immunized)
 
-interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$births)
-interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$immunized)
+ip5 <- interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$births)
+ip6 <- interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$immunized)
 ```
+
+
+```{r}
+# Health facility v/s immunization
+view(tiny_dhs)
+nigib1 <- data.frame(tiny_dhs$States, tiny_dhs$`Percent of births delivered in health facility`, tiny_dhs$`Percent of children fully immunized`)
+colnames(nigib1) <- c("States", "Health Facility", "Immunized")
+nigib2 <- reshape2::melt(nigib1, id.vars = 'States')
+
+nigib2 %>%
+  ggplot(aes(x = States, y = value, fill=variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip()
+
+#Illiterate females v/s antenatal care
+nigib1 <- data.frame(tiny_dhs$States, tiny_dhs$`Percent of illiterate females`, tiny_dhs$`Percent of mothers receiving antenatal care`)
+colnames(nigib1) <- c("States", "Illiterate Females", "Antenatal Care")
+nigib2 <- reshape2::melt(nigib1, id.vars = 'States')
+
+nigib2 %>%
+  ggplot(aes(x = States, y = value, fill=variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
