@@ -7,6 +7,7 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "Third world countries often struggle with figuring out where the needs of their people lie. Analysis of large datasets can help shed some light on the issue. We obtain a dataset from the National Family Health Survey in India, hosted by the Demographic and Health Surveys program in the U.S. In a reproducible way, we convert this dataset from the 1990s into a usable digital format, and analyze it. In doing so, we conclude that acquiring a large dataset and using it to establish policies should be a primary goal of developing countries that want to improve their economic conditions."
 output:
   bookdown::pdf_document2
+always_allow_html: true
 toc: TRUE
 bibliography: references.bib
 ---
@@ -15,17 +16,18 @@ bibliography: references.bib
 knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
+library(DiagrammeR)
 ```
 
 \newpage
 
 # Introduction
 
-The period 1980-2000 featured data science at the forefront of a developing era of statistical modelling, and several third world countries were beginning to jump on the bandwagon. Acknowledging that a large scale survey on the population of India had never been done before, K.B. Pathak (@nfhs) was ready to forge the path forward on behalf of his country. He was the director of the International Institute for Population Sciences (IIPS) in Bombay, and his team headed the Project to Strengthen the Research Capabilities of the Population Research Centres in India in 1991. The primary objective of this campaign was to finally provide state-level and national-level estimates of fertility, infant/child mortality, family planning practices, maternal/child health care, and the utilization of services provided for mothers and children. The National Family Health Survey (NFHS) took on this mission, and as a byproduct, provided high quality data to statisticians for analytical research on a range of population and health studies. 
+The period 1980-2000 featured data science at the forefront of a developing era of statistical modelling, and several third world countries were beginning to jump on the bandwagon. Acknowledging that a large scale survey on the population of India had never been done before, K.B. Pathak (@nfhs) was ready to forge the path forward on behalf of his country. He was the director of the International Institute for Population Sciences (IIPS) in Bombay, and his team headed the Project to Strengthen the Research Capabilities of the Population Research Centres in India in 1991. Despite his contributions to the field, his name does not appear even after a Google search. K.B. Pathak remains amongst the unsung heroes of the data science world (@history). 
 
-The release of this report came with a call from the IIPS for further analyses of the NFHS data, among researches both in and outside of India. The final report was made publicly available to anyone in the word through the United States Agency for International Development’s (USAID) Demographic and Health Surveys (DHS) program. The report contains a thorough record of household/individual respondent characteristics. Namely, data on marriage, fertility, family planning, utilization of antenatal services, vaccination, child feeding practices, nutritional status of children, and knowledge of AIDS. Alongside, interstate variations on key indicators were also included, allowing for regional comparisons to be made. As independent researchers and data scientists, we have taken on the IIPS’s call to further analyze this data, and report our findings and comments in this paper.
+The primary objective of this campaign was to finally provide state-level and national-level estimates of fertility, infant/child mortality, family planning practices, maternal/child health care, and the utilization of services provided for mothers and children. The National Family Health Survey (NFHS) took on this mission, and as a byproduct, provided high quality data to statisticians for analytical research on a range of population and health studies. The release of this report came with a call from the IIPS for further analyses of the NFHS data, among researches both in and outside of India. The final report was made publicly available to anyone in the word through the United States Agency for International Development’s (USAID) Demographic and Health Surveys (DHS) program. The report contains a thorough record of household/individual respondent characteristics. Namely, data on marriage, fertility, family planning, utilization of antenatal services, vaccination, child feeding practices, nutritional status of children, and knowledge of AIDS. Alongside, interstate variations on key indicators were also included, allowing for regional comparisons to be made. As independent researchers and data scientists, we have taken on the IIPS’s call to further analyze this data, and report our findings and comments in this paper.
 
-The report onwards features three sections. Firstly, we look at the dataset provided on pages 31-32 of the NFHS 1992 Final Report. Plots and directed acyclic graphs are used to visualize the data and relationship between variables. Moving on, we share our findings and the implications of results and the effect they might have on public policy in India. We also align our own findings with those of the NFHS, and analyze the progress made over the last 20 years, demonstrating the effect that data analysis has had on the development of the country. Finally, we discuss the methodology used by the NFHS and describe how they were effective in achieving their goal. We also propose some critiques that can aid in the future of data analysis in India and other third world countries following in their footsteps. Our report is carried out using R [@citeR], alongside various libraries cited (see References). R markdown [@citeRMD] was used for compilation and presentation.
+The report onwards features three sections. Firstly, we look at the dataset provided on pages 31-32 of the NFHS 1992 Final Report. Plots and directed acyclic graphs are used to visualize the data and relationship between variables. Moving on, we share our findings and the implications of results and the effect they might have on public policy in India. We also align our own findings with those of the NFHS, and analyze the progress made over the last 20 years, demonstrating the effect that data analysis has had on the development of the country. Finally, we discuss the methodology used by the NFHS and describe how they were effective in achieving their goal. We also propose some critiques that can aid in the future of data analysis in India and other third world countries following in their footsteps. Our report is carried out using R (@citeR), alongside various libraries cited (see References). R markdown (@citeRMD) was used for compilation and presentation.
 
 # Data
 
@@ -115,8 +117,27 @@ interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$births, xlab="Ante
 interaction.plot(tiny_dhs$antenatal, tiny_dhs$water, tiny_dhs$immunized, xlab="Antenatal Care (high/low)", ylab="Immunization (high/low)", trace.label = "Water Access")
 ```
 
-```{r, warning=FALSE, echo=FALSE, fig.align="center", fig.cap="A directed acyclic graph showing the interaction between the 5 variables", out.width = '95%'}
-include_graphics(here::here("outputs/materials/DAG.png"))
+```{r, warning=FALSE, echo=FALSE, fig.align="center", fig.cap="A directed acyclic graph showing the interaction between the 5 variables", out.width = '60%'}
+DiagrammeR::grViz("
+digraph {
+  graph [ranksep = 0.2]
+  node [shape = plaintext, fontsize = 10, fontname = Helvetica]
+    Illiterate
+    Antenatal
+    Water
+    Births
+    Immunized
+  edge [minlen = 2, arrowhead = vee]
+    Illiterate->Immunized
+    Illiterate->Births
+    Antenatal->Immunized
+    Antenatal->Births
+    Water->Immunized
+    Illiterate->Antenatal
+  { rank = same; Immunized; Births }
+}
+", height = 300)
+# if this causes an error, ensure phantomjs is installed: run <webshot::install_phantomjs()>
 ```
 
 # Results
