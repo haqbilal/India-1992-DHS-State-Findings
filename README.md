@@ -25,7 +25,7 @@ Scripts:
 How to generate the paper
     
     Download the repository's main folder
-    Open takingittothenextlevelrepro.Rproj in RStudio
+    Open India-1992-DHS-State-Findings.Rproj in RStudio
     Install libraries using install.packages() and run webshot::install_phantomjs() in the console so the DAGs compile
     Run 01-gather_data to download the pdf report and obtain the dataset from it and save it in raw_data.csv
     Run 02-clean_and_prepare_data.R to clean the data and save it in cleaned_data.csv
